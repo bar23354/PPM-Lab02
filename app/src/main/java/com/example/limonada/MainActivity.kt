@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             LimonadaTheme {
-                DiceRollerApp()
+                LimonadaApp()
             }
         }
     }
@@ -40,21 +40,71 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun DiceRollerApp() {
-    DiceWithButtonAndImage()
+fun LimonadaApp() {
+    var currentStep by remember { mutableStateOf(1) }
+    var squeezeCount by remember { mutableStateOf(0) }
 
+    when (currentStep) {
+        1 -> {
+            TreeButtonAndImage()
+            currentStep = 2
+            squeezeCount = (2..4).random()
+        }
+        2 -> {
+            LemonButtonAndImage(onImageClick = {
+                squeezeCount--
+                if (squeezeCount == 0) {
+                    currentStep = 3
+                }
+            })
+        }
+        3 -> {
+            GlassOfLemonadeButtonAndImage()
+            currentStep = 4
+        }
+        4 -> {
+            EmptyGlassButtonAndImage()
+            currentStep = 1
+        }
+    }
 }
 
 @Composable
-fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
+fun TreeButtonAndImage(modifier: Modifier = Modifier) {
+    var result by remember { mutableStateOf(1) }
+
+    val imageResource = when (result) {
+        1 -> R.drawable.lemon_squeeze
+        else -> R.drawable.lemon_tree
+    }
+
+    Column (
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(imageResource),
+            contentDescription = stringResource(R.string.Lemon_tree)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { result = (1)}) {
+            Text(stringResource(R.string.Lemon_tree))
+        }
+    }
+    Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center)
+}
+
+@Composable
+fun LemonButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit,) {
     var result by remember { mutableStateOf(1) }
     val imageResource = when (result) {
-        1 -> R.drawable.dice_1
-        2 -> R.drawable.dice_2
-        3 -> R.drawable.dice_3
-        4 -> R.drawable.dice_4
-        5 -> R.drawable.dice_5
-        else -> R.drawable.dice_6
+        1 -> R.drawable.lemon_squeeze
+        2 -> R.drawable.lemon_squeeze
+        3 -> R.drawable.lemon_squeeze
+        4 -> R.drawable.lemon_squeeze
+        5 -> R.drawable.lemon_drink
+        else -> R.drawable.lemon_squeeze
     }
     Column (
         modifier = modifier,
@@ -62,11 +112,63 @@ fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
     ) {
         Image(
             painter = painterResource(imageResource),
-            contentDescription = "1"
+            contentDescription = stringResource(R.string.Lemon_tree)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { result = (1..6).random() }) {
-            Text(stringResource(R.string.roll))
+        Button(onClick= onImageClick)   {
+            Text(stringResource(R.string.Lemon_tree))
+        }
+    }
+    Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center)
+}
+
+@Composable
+fun GlassOfLemonadeButtonAndImage(modifier: Modifier = Modifier) {
+    var result by remember { mutableStateOf(1) }
+
+    val imageResource = when (result) {
+        1 -> R.drawable.lemon_restart
+        else -> R.drawable.lemon_drink
+    }
+
+    Column (
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(imageResource),
+            contentDescription = stringResource(R.string.Glass_of_lemonade)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { result = (1)}) {
+            Text(stringResource(R.string.Glass_of_lemonade))
+        }
+    }
+    Modifier.fillMaxSize()
+        .wrapContentSize(Alignment.Center)
+}
+
+@Composable
+fun EmptyGlassButtonAndImage(modifier: Modifier = Modifier) {
+    var result by remember { mutableStateOf(1) }
+
+    val imageResource = when (result) {
+        1 -> R.drawable.lemon_tree
+        else -> R.drawable.lemon_restart
+    }
+
+    Column (
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(imageResource),
+            contentDescription = stringResource(R.string.Empty_glass)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { result = (1)}) {
+            Text(stringResource(R.string.Empty_glass))
         }
     }
     Modifier.fillMaxSize()
