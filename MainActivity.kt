@@ -1,31 +1,27 @@
-package com.example.lemonadelocal
+package com.example.limonada
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.lemonadelocal.ui.theme.LemonadeLocalTheme
+import com.example.limonada.ui.theme.LimonadaTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            LemonadeLocalTheme {
-                LemonadeApp()
+            LimonadaTheme {
+                LemonadeApp() // inicia la app de limonada
             }
         }
     }
@@ -34,20 +30,20 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LemonadeApp() {
-    var currentStep by remember { mutableStateOf(1) }
-    var squeezeCount by remember { mutableStateOf(0) }
+    var currentStep by remember { mutableStateOf(1) } // controla el paso actual
+    var squeezeCount by remember { mutableStateOf(0) } // cuenta los apretones necesarios
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Lemonade",
+                        text = "Lemonade", // título de la app
                         fontWeight = FontWeight.Bold
                     )
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primaryContainer // color del top bar
                 )
             )
         }
@@ -55,73 +51,53 @@ fun LemonadeApp() {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding), // relleno para mantener la UI ordenada
             color = MaterialTheme.colorScheme.background
         ) {
             when (currentStep) {
                 1 -> {
-                    TreeButtonAndImage {
-                        currentStep = 2
-                        squeezeCount = (2..4).random()
-                    }
+                    LemonTree(onImageClick = {
+                        currentStep = 2 // cambia al paso de apretar el limón
+                        squeezeCount = (2..4).random() // determina los apretones requeridos
+                    })
                 }
                 2 -> {
-                    LemonButtonAndImage(onImageClick = {
-                        squeezeCount--
+                    Lemon(onImageClick = {
+                        squeezeCount-- // disminuye el contador de apretones
                         if (squeezeCount == 0) {
-                            currentStep = 3
+                            currentStep = 3 // avanza al siguiente paso
                         }
                     })
                 }
                 3 -> {
-                    GlassOfLemonadeButtonAndImage {
-                        currentStep = 4
-                    }
+                    GlassOfLemonade(onImageClick = {
+                        currentStep = 4 // avanza al paso de vaso vacío
+                    })
                 }
                 4 -> {
-                    EmptyGlassButtonAndImage {
-                        currentStep = 1
-                    }
+                    EmptyGlass(onImageClick = {
+                        currentStep = 1 // reinicia al primer paso
+                    })
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun TreeButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
+fun LemonTree(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
+            .wrapContentSize(Alignment.Center), // centra el contenido
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.lemon_tree),
-            contentDescription = stringResource(R.string.Lemon_tree)
+            painter = painterResource(R.drawable.lemon_tree), // imagen del árbol de limón
+            contentDescription = stringResource(R.string.Lemon_tree),
+            modifier = Modifier.wrapContentSize()
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onImageClick) {
-            Text(stringResource(R.string.Lemon_tree))
-        }
-    }
-}
-
-
-@Composable
-fun LemonButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(R.drawable.lemon_squeeze),
-            contentDescription = stringResource(R.string.Lemon_tree)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // espacio entre la imagen y el botón
         Button(onClick = onImageClick) {
             Text(stringResource(R.string.Lemon_tree))
         }
@@ -129,18 +105,39 @@ fun LemonButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit)
 }
 
 @Composable
-fun GlassOfLemonadeButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
+fun Lemon(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
+            .wrapContentSize(Alignment.Center), // centra el contenido
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.lemon_drink),
-            contentDescription = stringResource(R.string.Glass_of_lemonade)
+            painter = painterResource(R.drawable.lemon_squeeze), // imagen de apretar el limón
+            contentDescription = stringResource(R.string.lemon_select),
+            modifier = Modifier.wrapContentSize()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // espacio entre la imagen y el botón
+        Button(onClick = onImageClick) {
+            Text(stringResource(R.string.lemon_select))
+        }
+    }
+}
+
+@Composable
+fun GlassOfLemonade(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center), // centra el contenido
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(R.drawable.lemon_drink), // imagen del vaso de limonada
+            contentDescription = stringResource(R.string.Glass_of_lemonade),
+            modifier = Modifier.wrapContentSize()
+        )
+        Spacer(modifier = Modifier.height(16.dp)) // espacio entre la imagen y el botón
         Button(onClick = onImageClick) {
             Text(stringResource(R.string.Glass_of_lemonade))
         }
@@ -148,18 +145,19 @@ fun GlassOfLemonadeButtonAndImage(modifier: Modifier = Modifier, onImageClick: (
 }
 
 @Composable
-fun EmptyGlassButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
+fun EmptyGlass(modifier: Modifier = Modifier, onImageClick: () -> Unit) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .wrapContentSize(Alignment.Center),
+            .wrapContentSize(Alignment.Center), // centra el contenido
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(R.drawable.lemon_restart),
-            contentDescription = stringResource(R.string.Empty_glass)
+            painter = painterResource(R.drawable.lemon_restart), // imagen del vaso vacío
+            contentDescription = stringResource(R.string.Empty_glass),
+            modifier = Modifier.wrapContentSize()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp)) // espacio entre la imagen y el botón
         Button(onClick = onImageClick) {
             Text(stringResource(R.string.Empty_glass))
         }
@@ -169,7 +167,7 @@ fun EmptyGlassButtonAndImage(modifier: Modifier = Modifier, onImageClick: () -> 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LemonPreview() {
-    LemonadeLocalTheme {
-        LemonadeApp()
+    LimonadaTheme {
+        LemonadeApp() // previsualiza la app de limonada
     }
 }
